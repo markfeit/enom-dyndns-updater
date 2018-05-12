@@ -1,0 +1,45 @@
+#!/bin/sh -e
+#
+# Update a dynamic DNS record at eNom
+#
+
+WHEREAMI=$(dirname $0)
+
+[ "$1" = "--force" ] && FORCE=true
+
+CONFIG_FILE="${WHEREAMI}/config"
+
+if [ ! -r "${CONFIG_FILE}" ]
+then
+    echo "Can't find configuration file." 1>&2
+    exit 1
+fi
+
+. "${CONFIG_FILE}"
+
+if [ -z "${ZONE}" -o -z "${HOST}" -o -z "${PASSWORD}" ]
+then
+    echo "Configuration is incomplete." 1>&2
+    exit 1
+fi
+
+LASTFILE="${WHEREAMI}/last-ip"
+
+[ -e "${LASTFILE}" ] \
+    && LASTIP=$(awk -F= '$1 == "IP" { print $2 }' "${LASTFILE}" | tr -d "\r") \
+    || LASTIP=""
+
+MYIP=$(curl --silent 'https://api.ipify.org?format=text')
+
+[ "${MYIP}" != "${LASTIP}" -o "${FORCE}" ] || exit 0
+
+logger "Updating eNOM DNS ${HOST}.${ZONE} to ${MYIP}"
+
+curl \
+    --silent \
+    --insecure \
+    --output "${LASTFILE}" \
+    "https://dynamic.name-services.com/interface.asp?Command=SetDNSHost&HostName=${HOST}&Zone=${ZONE}&Address=${MYIP}&DomainPassword=${PASSWORD}" \
+    || rm -f ${LASTFILE}
+
+exit 0

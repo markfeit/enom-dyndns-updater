@@ -1,0 +1,4 @@
+#
+# Crontab Addition for Dynamic DNS Updeter
+#
+0,10,20,30,40,50 * * * * __UPDATE__

@@ -1,0 +1,14 @@
+#
+# Configuration for eNOM Dynamic DNS Updater
+#
+
+# Un-comment and set each of these to complete the configuration.
+
+# Domain where the update is to take place
+#ZONE="example.com"
+
+# Host within the domain to update
+#HOST="dynamichost"
+
+# Password to use when authenticating
+#PASSWORD="mumble"
