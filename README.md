@@ -1,7 +1,7 @@
 # eNOM Dynamic DNS Updater
 
 This repository contains a script and crontab entry that can be used
-to maintain a dynamic DNS address in a zone serviced by [eNOM's DNS
+to maintain a dynamic DNS address in a zone served by [eNOM's DNS
 hosting service](https://www.enom.com/hosting/dns).
 
 The host running the script does not need to be connected directly to
@@ -14,8 +14,8 @@ outside address.
 
 This script was will run in any environment that can provide the following:
 
- * POSIX-compliant Bourne shell
- * POSIX-compliant implementation of `logger`
+ * A POSIX-compliant Bourne shell
+ * A POSIX-compliant implementation of `logger`
  * The [cURL](https://curl.haxx.se) command-line interface
 
 **Note that the `install` target in the Makefile uses Linux-specific commands.**
@@ -24,7 +24,7 @@ This script was will run in any environment that can provide the following:
 ## Installation
 
 Edit the configuration items at the top of the `Makefile` to suit your
-installation.  (The defaults are find on most Linux systems.)
+installation.  (The defaults are fine on most Linux systems.)
 
 As `root`, execute `make install`.
 
