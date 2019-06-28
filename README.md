@@ -28,7 +28,7 @@ installation.  (The defaults are fine on most Linux systems.)
 
 As `root`, execute `make install`.
 
-Edit `/opt/enomdns/config` to set up the zone, host and password.
+Edit `config` to set up the zone, host and password.
 
 As `root` execute `make install` a second time to make sure all
 ownership and permissions are correct.
