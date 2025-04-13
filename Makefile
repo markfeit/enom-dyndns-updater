@@ -15,7 +15,11 @@ default:
 
 install:
 	id "$(INSTALL_AS)" > /dev/null 2>&1 \
-	|| useradd -c "eNOM DNS Updater" -d "$(DESTDIR)" "$(INSTALL_AS)"
+		|| useradd \
+			-c "eNOM DNS Updater" \
+			-d "$(DESTDIR)" \
+			-m \
+			"$(INSTALL_AS)"
 	cp -f update "$(DESTDIR)"
 	[ -e "$(CONFIG)" ] || cp -f config "$(CONFIG)"
 	chmod 600 "$(CONFIG)"

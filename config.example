@@ -1,5 +1,5 @@
 #
-# Configuration for eNOM Dynamic DNS Updater
+# Example Configuration for eNOM Dynamic DNS Updater
 #
 
 # Un-comment and set each of these to complete the configuration.
@@ -7,7 +7,7 @@
 # Domain where the update is to take place
 #ZONE="example.com"
 
-# Host within the domain to update
+# Host within the domain to update (e.g., dynamichost.example.com)
 #HOST="dynamichost"
 
 # Password to use when authenticating
