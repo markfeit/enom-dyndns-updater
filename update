@@ -31,6 +31,12 @@ LASTFILE="${WHEREAMI}/last-ip"
 
 MYIP=$(curl --silent 'https://api.ipify.org?format=text')
 
+cat <<EOF > "${WHEREAMI}/last-run"
+Date:       $(date)
+Last IP:    ${LASTIP}
+Current IP: ${MYIP}
+EOF
+
 [ "${MYIP}" != "${LASTIP}" -o "${FORCE}" ] || exit 0
 
 logger "Updating eNOM DNS ${HOST}.${ZONE} to ${MYIP}"
