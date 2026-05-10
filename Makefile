@@ -20,7 +20,7 @@ install:
 			-d "$(DESTDIR)" \
 			-m \
 			"$(INSTALL_AS)"
-	cp -f update "$(DESTDIR)"
+	cp -f update get-my-ip "$(DESTDIR)"
 	[ -e "$(CONFIG)" ] || cp -f config "$(CONFIG)"
 	chmod 600 "$(CONFIG)"
 	chown -R "$(INSTALL_AS).$(INSTALL_AS)" "$(DESTDIR)"
