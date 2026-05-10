@@ -1,0 +1,190 @@
+#!/bin/sh -e
+#
+# Get this host's public IPv4 from one of a number of services selected
+# in random order and queried until one works.
+#
+# Order can be forced by naming services on the command line.
+#
+
+SERVICES="\
+	bigdatacloud \
+	dyndns \
+	icanhazip \
+	ifconfigme \
+	ip4me \
+	ipapi.co \
+	ipapi.is \
+	ipify \
+	ipinfo \
+	iplocate \
+	myip \
+	myip.io \
+	seeip \
+	trackip \
+	"
+
+VERBOSE=false
+
+while echo "$1" | grep -q -E '^--'
+do
+    ARG=$1
+    shift
+
+    case "${ARG}" in
+	-v|--verbose)
+	    VERBOSE=true
+	    ;;
+	*)
+	    echo "Invalid argument '${ARG}'" 1>&2
+	    exit 1
+    esac
+done
+
+    
+# Allow order override from the command line
+if [ "$#" -gt 0 ]
+then
+    SERVICES="$@"
+    SHUFFLER=cat
+else
+    SHUFFLER=shuffle_services
+fi
+
+
+# Randomly sort a formatted services list
+shuffle_services()
+{
+    awk 'BEGIN{srand();} {printf "%0.15f\t%s\n", rand(), $0;}' \
+	| sort -n \
+	| cut -f 2-
+}
+
+
+# Grab a URL using IPv4
+do_curl()
+{
+    curl -s -4 "$@"
+}
+
+
+# Get IP address from one of the services
+get_from()
+{
+    case "$1" in
+
+	dyndns)
+	    do_curl 'http://checkip.dyndns.org' \
+		| sed 's/.*Current IP Address: \([0-9\.]*\).*/\1/g' \
+		|| return $?
+	    ;;
+
+	bigdatacloud)
+	    do_curl https://api.bigdatacloud.net/data/client-ip \
+		| tr '\n' ' ' \
+		| sed -e 's/^.*"ipString"\s*:\s*"//; s/".*$//' \
+		|| return $?
+	    ;;
+
+	icanhazip)
+	    do_curl https://icanhazip.com \
+		|| return $?
+	    ;;
+
+	ifconfigme)
+	    do_curl https://ifconfig.me \
+		|| return $?
+	    ;;
+
+	ip4me)
+	    do_curl https://ip4.me/api/ \
+		| awk -F, '$1 == "IPv4" { print $2 }' \
+		|| return $?
+	    ;;
+
+	ipapi.co)
+	    do_curl https://ipapi.co/jsonp \
+		| sed -e 's/^.*"ip"\s*:\s*"//; s/".*$//' \
+		|| return $?
+	    ;;
+
+	ipapi.is)
+	    do_curl https://api.ipapi.is \
+		| tr '\n' ' ' \
+		| sed -e 's/^.*"ip"\s*:\s*"//; s/".*$//' \
+		|| return $?
+	    ;;
+
+	ipify)
+	    do_curl 'https://api.ipify.org?format=text' \
+		|| return $?
+	    ;;
+
+	ipinfo)
+	    do_curl https://ipinfo.io/ip \
+		|| return $?
+	    ;;
+
+	iplocate)
+	    do_curl https://api.iplocate.io
+	    ;;
+
+	myip)
+	    do_curl https://api.myip.com \
+		| sed -e 's/^.*"ip"\s*:\s*"//; s/".*$//' \
+		|| return $?
+	    ;;
+
+	myip.io)
+	    curl -s https://api.my-ip.io/v2/ip.txt \
+		| head -1 \
+		|| return $?
+	    ;;
+
+	seeip)
+	    do_curl https://api.seeip.org
+	    ;;
+
+	trackip)
+	    do_curl https://www.trackip.net/ip
+	    ;;
+
+	# Don't put these in the services list.
+	fail)
+	    do_curl https://unresolvable.fqdn || return $?
+	    ;;
+
+	static)
+	    echo 0.0.0.0 || return $?
+	    ;;
+
+	*)
+	    echo "Service '$1' is not supported" 1>&2
+	    return 1
+    esac
+}
+
+RESULT=$(
+    echo "${SERVICES}" \
+	| tr -s ' \t' '\n' \
+	| sed -e '/^$/d' \
+	| ${SHUFFLER} \
+	| while read SERVICE
+    do
+	${VERBOSE} && echo "Trying ${SERVICE}" 1>&2
+	RESULT=$(get_from "${SERVICE}") || continue
+	
+	FOUND=true
+	echo "${RESULT}"
+	break
+    done
+)
+
+if [ -z "${RESULT}" ]
+then
+    echo "Failed to obtain an address" 1>&2
+    exit 1
+fi
+    
+echo "${RESULT}"
+
+exit 0
