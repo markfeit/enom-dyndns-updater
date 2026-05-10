@@ -1,13 +1,14 @@
 # eNOM Dynamic DNS Updater
 
 This repository contains a script and crontab entry that can be used
-to maintain a dynamic DNS address in a zone served by [eNOM's DNS
-hosting service](https://www.enom.com/hosting/dns).
+to maintain the `A` record for a dynamic DNS address in a zone served
+by [eNOM's DNS hosting service](https://www.enom.com/hosting/dns).
 
 The host running the script does not need to be connected directly to
-the Internet on a public-facing address; the
-[ipify](https://www.ipify.org) service is used to determine the
-outside address.
+the Internet on a public-facing address.  The updater will determine
+the address by randomly selecting the first of more than a dozen
+public show-my-IP services.
+
 
 
 ## Prerequisites
