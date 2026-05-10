@@ -29,12 +29,14 @@ LASTFILE="${WHEREAMI}/last-ip"
     && LASTIP=$(awk -F= '$1 == "IP" { print $2 }' "${LASTFILE}" | tr -d "\r") \
     || LASTIP=""
 
-MYIP=$("${WHEREAMI}/get-my-ip")
+GETMYIP=$("${WHEREAMI}/get-my-ip")
+MYIP=$(echo "${GETMYIP}" | cut -d' ' -f 1)
+SOURCE=$(echo "${GETMYIP}" | cut -d' ' -f 2)
 
 cat <<EOF > "${WHEREAMI}/last-run"
-Date:       $(date)
-Last IP:    ${LASTIP}
-Current IP: ${MYIP}
+Date:           $(date)
+Last IP:        ${LASTIP}
+Current IP:     ${MYIP} from ${SOURCE}
 EOF
 
 [ "${MYIP}" != "${LASTIP}" -o "${FORCE}" ] || exit 0

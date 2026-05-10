@@ -3,6 +3,8 @@
 # Get this host's public IPv4 from one of a number of services selected
 # in random order and queried until one works.
 #
+# Output is a single line of IPV4-ADDRESS SERVICE-USED
+#
 # Order can be forced by naming services on the command line.
 #
 
@@ -174,7 +176,7 @@ RESULT=$(
 	RESULT=$(get_from "${SERVICE}") || continue
 	
 	FOUND=true
-	echo "${RESULT}"
+	echo "${RESULT} ${SERVICE}"
 	break
     done
 )
