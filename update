@@ -29,7 +29,7 @@ LASTFILE="${WHEREAMI}/last-ip"
     && LASTIP=$(awk -F= '$1 == "IP" { print $2 }' "${LASTFILE}" | tr -d "\r") \
     || LASTIP=""
 
-GETMYIP=$("${WHEREAMI}/get-my-ip")
+GETMYIP=$("${WHEREAMI}/get-my-public-ip")
 MYIP=$(echo "${GETMYIP}" | cut -d' ' -f 1)
 SOURCE=$(echo "${GETMYIP}" | cut -d' ' -f 2)
 
